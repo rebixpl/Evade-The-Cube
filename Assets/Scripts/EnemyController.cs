@@ -2,9 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum EnemyType
+{
+    Catcher,
+    Evader
+}
+
 public class EnemyController : MonoBehaviour
 {
     public float speed = 6f;
+    public EnemyType enemyType;
 
     private PlayerController m_PC;
     private Stats m_stats;
@@ -36,16 +43,25 @@ public class EnemyController : MonoBehaviour
             transform.position.z - speed * Time.deltaTime);
 
         // measure distance between the enemy and player position
-
         if (Vector3.Distance(m_PC.transform.position, transform.position) < 1.0f)
+        {
+            if (enemyType == EnemyType.Evader)
+            {
+                m_PC.ReceiveDamage();
+            }
+            Destroy(gameObject);
+        }
+        else if (m_PC.transform.position.z - transform.position.z > 5.0f && enemyType == EnemyType.Catcher)
         {
             m_PC.ReceiveDamage();
             Destroy(gameObject);
         }
-        else
-        if (transform.position.z <= m_TresholdPositionZ)
+        else if (transform.position.z <= m_TresholdPositionZ)
         {
             Destroy(gameObject);
         }
+
     }
+
+
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,9 +11,12 @@ public class PlayerController : MonoBehaviour
     public Transform leftWall;
     public Transform rightWall;
 
+    public HudManager hudManager;
+
     private void Awake()
     {
         m_stats = GetComponent<Stats>();
+        hudManager.UpdateHealthText(m_stats.Health);
     }
 
     // Start is called before the first frame update
@@ -27,6 +31,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (m_stats.Health <= 0)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
@@ -55,7 +64,10 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void ReceiveDamage() {
+    public void ReceiveDamage()
+    {
+        m_stats.UpdateHealth(10.0f);
+        hudManager.UpdateHealthText(m_stats.Health);
         Debug.Log("Player damaged");
     }
 }
