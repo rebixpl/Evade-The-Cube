@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 10;
+    public float speed = 10f;
     private Stats m_stats;
+
+    public Transform leftWall;
+    public Transform rightWall;
 
     private void Awake()
     {
@@ -27,14 +30,32 @@ public class PlayerController : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
+        float horizontalPosition = transform.position.x + horizontalInput * speed * Time.deltaTime;
+
+        float playerSize = transform.localScale.x / 2;
+
+        if (horizontalPosition - playerSize <= leftWall.position.x + leftWall.localScale.x / 2)
+        {
+            return;
+        }
+
+        if (horizontalPosition + playerSize >= rightWall.position.x - rightWall.localScale.x / 2)
+        {
+            return;
+        }
+
         //Debug.Log($"H -> {horizontalInput}");
         //Debug.Log($"V /\\ {verticalInput}");
 
         transform.position = new Vector3(
-            transform.position.x + horizontalInput * speed * Time.deltaTime, 
-            1, 
-            transform.position.z + verticalInput * speed * Time.deltaTime);
+            horizontalPosition,
+            1,
+            transform.position.z);
 
 
+    }
+
+    public void ReceiveDamage() {
+        Debug.Log("Player damaged");
     }
 }
